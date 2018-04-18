@@ -46,6 +46,7 @@
   environment.systemPackages = with pkgs; [
      curl wget unzip tcpdump binutils vim git zfs zfstools fio iozone docker screen smartmontools sysstat dmidecode
      plex transmission nginx openvpn netatalk avahi nssmdns samba
+     syncthing
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -65,6 +66,7 @@
         80 443 9091
         548 # afp mac share
         445 139 # smb share
+        8384 # syncthing
   ];
   networking.firewall.allowedUDPPorts = [
     137 138 # NetBios
@@ -132,7 +134,7 @@
             { addr = "0.0.0.0"; port = 80; }
         ];
         locations."/" = {
-            proxyPass =  "http://127.0.0.1:9091";
+            proxyPass =  "http://127.0.0.1:8384";
         };
     };
   };
@@ -192,5 +194,11 @@
             "vfs objects" = "catia fruit streams_xattr";
         };
     };
+  };
+
+  services.syncthing = {
+      dataDir = "/data/syncthing";
+      enable = true;
+      openDefaultPorts = true;
   };
 }
