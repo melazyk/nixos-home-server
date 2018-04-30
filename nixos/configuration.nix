@@ -45,6 +45,7 @@
   nixpkgs.config.allowUnfree = true;
   environment.systemPackages = with pkgs; [
      curl wget unzip tcpdump binutils vim git zfs zfstools fio iozone docker screen smartmontools sysstat dmidecode
+     lsof file syslogng
      plex transmission nginx openvpn netatalk avahi nssmdns samba
      syncthing
   ];
@@ -70,6 +71,7 @@
   ];
   networking.firewall.allowedUDPPorts = [
     137 138 # NetBios
+    514 # syslog
   ];
 
   # Or disable the firewall altogether.
@@ -200,5 +202,19 @@
       dataDir = "/data/syncthing";
       enable = true;
       openDefaultPorts = true;
+  };
+
+  services.syslog-ng = {
+      enable = true;
+      extraConfig = ''
+        source syslog_udp { udp(port(514)); };
+        destination extlog { file("/var/log/external.log"); };
+        filter intnet { netmask(192.168.0.0/255.255.255.0)};
+        log {
+            source(syslog_udp);
+            filter(intnet);
+            destination(extlog);
+        };
+      '';
   };
 }
