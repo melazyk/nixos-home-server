@@ -45,7 +45,7 @@
   nixpkgs.config.allowUnfree = true;
   environment.systemPackages = with pkgs; [
      curl wget unzip tcpdump binutils vim git zfs zfstools fio iozone docker screen smartmontools sysstat dmidecode
-     lsof file syslogng
+     lsof file syslogng nmap
      plex transmission nginx openvpn netatalk avahi nssmdns samba
      syncthing
   ];
