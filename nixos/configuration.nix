@@ -217,4 +217,11 @@
         };
       '';
   };
+
+  services.cron = {
+    enable = true;
+    systemCronJobs = [
+        "35 * * * *     root    /data/system/sbin/update_rkn.sh > /data/logs/update_rkn.log 2>&1"
+    ];
+  };
 }
