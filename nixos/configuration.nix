@@ -48,6 +48,7 @@
      lsof file syslogng nmap
      plex transmission nginx openvpn netatalk avahi nssmdns samba
      syncthing
+     kubernetes
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -224,4 +225,17 @@
         "35 * * * *     root    /data/system/sbin/update_rkn.sh > /data/logs/update_rkn.log 2>&1"
     ];
   };
+
+  systemd.services.kubelet = {
+    wantedBy = [ "multi-user.target" ];
+    after = [ "network.target" ];
+    description = "Kubelet for home server";
+    path = with pkgs; [ gitMinimal openssh docker utillinux iproute ethtool thin-provisioning-tools iptables socat zfs ] ++ config.services.kubernetes.path;
+    serviceConfig = {
+        Type = "simple";
+        User = "root";
+        ExecStart = ''${pkgs.kubernetes}/bin/kubelet --allow-privileged=true --bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --require-kubeconfig'';
+    };
+  };
+
 }
